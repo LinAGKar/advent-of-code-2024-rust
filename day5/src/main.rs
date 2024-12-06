@@ -55,13 +55,9 @@ fn part_2(input: &str) -> u32 {
         new_nums.reserve(nums.len());
         let mut changed = false;
         while !nums.is_empty() {
-            let next = nums.iter().enumerate().find_map(|(n, &x)| {
-                if !nums.iter().any(|&y| must_come_after[y as usize][x as usize]) {
-                    Some(n)
-                } else {
-                    None
-                }
-            }).unwrap();
+            let next = nums.iter().position(|&x|
+                !nums.iter().any(|&y| must_come_after[y as usize][x as usize])
+            ).unwrap();
 
             new_nums.push(nums.remove(next));
             changed |= next > 0;
