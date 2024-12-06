@@ -2,7 +2,7 @@ use std::io::Read;
 
 fn part_1(input: &str) -> u32 {
     let mut lines = input.lines();
-    let mut must_come_after = vec![vec![false; 100]; 100];
+    let mut must_come_after = vec![[false; 100]; 100];
 
     while let Some(line) = lines.next() {
         if line.is_empty() {
@@ -31,7 +31,7 @@ fn part_1(input: &str) -> u32 {
 
 fn part_2(input: &str) -> u32 {
     let mut lines = input.lines();
-    let mut must_come_after = vec![vec![false; 100]; 100];
+    let mut must_come_after = vec![[false; 100]; 100];
 
     while let Some(line) = lines.next() {
         if line.is_empty() {
