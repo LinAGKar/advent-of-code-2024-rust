@@ -9,7 +9,7 @@ enum DirectionKey {
     Right = 4,
 }
 
-fn calc_level_costs(previous_costs: &[usize], new_costs: &mut [usize], paths: &[Vec<Vec<DirectionKey>>]) {
+fn calc_level_costs(previous_costs: &[u64], new_costs: &mut [u64], paths: &[Vec<Vec<DirectionKey>>]) {
     for (paths, new_cost) in paths.iter().zip(new_costs) {
         *new_cost = paths.iter().map(|path| {
             // Sum up the costs of going from each button to the next one and pressing it, starting from Activate
@@ -23,7 +23,7 @@ fn calc_level_costs(previous_costs: &[usize], new_costs: &mut [usize], paths: &[
     }
 }
 
-fn get_paths<const HOLE_Y: usize>(paths: &mut Vec<Vec<DirectionKey>>, direction_key_positions: &[[usize; 2]], start: usize, end: usize) {
+fn get_paths<const HOLE_Y: u8>(paths: &mut Vec<Vec<DirectionKey>>, direction_key_positions: &[[u8; 2]], start: usize, end: usize) {
     let [start_x, start_y] = direction_key_positions[start];
     let [end_x, end_y] = direction_key_positions[end];
 
@@ -70,7 +70,7 @@ fn get_paths<const HOLE_Y: usize>(paths: &mut Vec<Vec<DirectionKey>>, direction_
     // some presses while eliminating others, to get a path that takes fewer presses in total.
 }
 
-fn calc_directional_key_costs<const ROBOT_KEYPADS: usize>() -> Vec<usize> {
+fn calc_directional_key_costs<const ROBOT_KEYPADS: u8>() -> Vec<u64> {
     // Where each key is located on the directional keypad
     let direction_key_positions = [
         [1, 0],
@@ -90,8 +90,8 @@ fn calc_directional_key_costs<const ROBOT_KEYPADS: usize>() -> Vec<usize> {
     }).collect();
 
     // How many button presses it takes to get to any button from any other button and then press it
-    let mut path_costs: Vec<usize> = direction_key_paths.iter().map(|paths| {
-        paths.iter().map(|path| path.len()).min().unwrap()
+    let mut path_costs: Vec<u64> = direction_key_paths.iter().map(|paths| {
+        paths.iter().map(|path| path.len() as u64).min().unwrap()
     }).collect();
 
     let mut new_costs = vec![0; 5 * 5];
@@ -103,7 +103,7 @@ fn calc_directional_key_costs<const ROBOT_KEYPADS: usize>() -> Vec<usize> {
     path_costs
 }
 
-fn calculate_combo_complexities<const ROBOT_KEYPADS: usize>(input: &str) -> usize {
+fn calculate_combo_complexities<const ROBOT_KEYPADS: u8>(input: &str) -> u64 {
     let directional_key_costs = calc_directional_key_costs::<ROBOT_KEYPADS>();
 
     // Where each key is located on the numeric keypad.
@@ -124,7 +124,7 @@ fn calculate_combo_complexities<const ROBOT_KEYPADS: usize>(input: &str) -> usiz
 
     let mut paths = Vec::new();
     input.lines().map(|combo| {
-        let number: usize = combo.split('A').next().unwrap().parse().unwrap();
+        let number: u64 = combo.split('A').next().unwrap().parse().unwrap();
 
         let mut pos = numeric_key_positions.len() - 1;
         combo.chars().map(|key| {
@@ -134,7 +134,7 @@ fn calculate_combo_complexities<const ROBOT_KEYPADS: usize>(input: &str) -> usiz
                 _ => panic!("Invalid character: {}", key),
             };
             get_paths::<3>(&mut paths, &numeric_key_positions, pos, new_pos);
-            let cost: usize = paths.iter().map(|path| {
+            let cost: u64 = paths.iter().map(|path| {
                 let mut pos = DirectionKey::Activate;
                 path.iter().map(|&new_pos| {
                     let cost = directional_key_costs[pos as usize * 5 + new_pos as usize];
@@ -145,15 +145,15 @@ fn calculate_combo_complexities<const ROBOT_KEYPADS: usize>(input: &str) -> usiz
             pos = new_pos;
             paths.clear();
             cost
-        }).sum::<usize>() * number
+        }).sum::<u64>() * number
     }).sum()
 }
 
-fn part_1(input: &str) -> usize {
+fn part_1(input: &str) -> u64 {
     calculate_combo_complexities::<2>(input)
 }
 
-fn part_2(input: &str) -> usize {
+fn part_2(input: &str) -> u64 {
     calculate_combo_complexities::<25>(input)
 }
 
