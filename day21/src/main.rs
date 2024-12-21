@@ -9,9 +9,9 @@ enum DirectionKey {
     Right = 4,
 }
 
-fn calc_level_costs(previous_costs: &[usize], paths: &[Vec<Vec<DirectionKey>>]) -> Vec<usize> {
-    paths.iter().map(|paths| {
-        paths.iter().map(|path| {
+fn calc_level_costs(previous_costs: &[usize], new_costs: &mut [usize], paths: &[Vec<Vec<DirectionKey>>]) {
+    for (paths, new_cost) in paths.iter().zip(new_costs) {
+        *new_cost = paths.iter().map(|path| {
             // Sum up the costs of going from each button to the next one and pressing it, starting from Activate
             let mut pos = DirectionKey::Activate;
             path.iter().map(|&new_pos| {
@@ -20,7 +20,7 @@ fn calc_level_costs(previous_costs: &[usize], paths: &[Vec<Vec<DirectionKey>>]) 
                 cost
             }).sum()
         }).min().unwrap()
-    }).collect()
+    }
 }
 
 fn get_paths<const HOLE_Y: usize>(paths: &mut Vec<Vec<DirectionKey>>, direction_key_positions: &[[usize; 2]], start: usize, end: usize) {
@@ -94,8 +94,10 @@ fn calc_directional_key_costs<const ROBOT_KEYPADS: usize>() -> Vec<usize> {
         paths.iter().map(|path| path.len()).min().unwrap()
     }).collect();
 
+    let mut new_costs = vec![0; 5 * 5];
     for _ in 0..ROBOT_KEYPADS - 1 {
-        path_costs = calc_level_costs(&path_costs, &direction_key_paths);
+        calc_level_costs(&path_costs, &mut new_costs, &direction_key_paths);
+        std::mem::swap(&mut path_costs, &mut new_costs);
     }
 
     path_costs
