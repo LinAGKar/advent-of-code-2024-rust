@@ -23,9 +23,9 @@ fn calc_level_costs(previous_costs: &[u64], new_costs: &mut [u64], paths: &[Vec<
     }
 }
 
-fn get_paths<const HOLE_Y: u8>(paths: &mut Vec<Vec<DirectionKey>>, direction_key_positions: &[[u8; 2]], start: usize, end: usize) {
-    let [start_x, start_y] = direction_key_positions[start];
-    let [end_x, end_y] = direction_key_positions[end];
+fn get_paths<const HOLE_Y: u8>(paths: &mut Vec<Vec<DirectionKey>>, key_positions: &[[u8; 2]], start: usize, end: usize) {
+    let [start_x, start_y] = key_positions[start];
+    let [end_x, end_y] = key_positions[end];
 
     if !(start_x == 0 && end_y == HOLE_Y) {
         // Start by going vertically and then horizontally
